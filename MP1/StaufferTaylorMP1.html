@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<script src="StaufferTaylorMP1.js">
+</script>
+
+<script src="sylvester.js">
+</script>
+
+<script src="glUtils.js">
+</script>
+
+<script src="webgl-utils.js">
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	   varying lowp vec4 vColor;
+    	
+      void main(void) {
+        gl_FragColor = vColor;
+      }
+
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+	    attribute vec3 aVertexPosition;
+      attribute vec4 aVertexColor;
+    
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+      uniform float time;
+      
+			varying lowp vec4 vColor;
+    
+      void main(void) {
+        vec3 newPosition = aVertexPosition;
+        newPosition.x = newPosition.x + (newPosition.y)*(0.4)*cos(0.5*time);
+        newPosition.y = newPosition.y + (newPosition.x)*(0.4)*cos(0.5*time);
+        gl_Position = uPMatrix * uMVMatrix * vec4(newPosition, 1.0);
+        vColor = aVertexColor;
+      }
+</script>
+
+
+	<body onload="start()">
+      <div style="position:absolute; z-index:1; left:20px;">
+        <p> <font color = #FF4105 > D: Toggle Dancing </p>
+        <p> W: Toggle Wireframe </p>
+        <p> F: Toggle Fill Color </font> </p>
+      </div>
+  		<canvas id="glcanvas" width="640" height="480" style="position:absolute;">
+          Your Browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+  		</canvas>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
