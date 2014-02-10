@@ -11,7 +11,7 @@ function start(){
 	gl = initWebGL(canvas); //initialize the GL context
 
 	if(gl){
-		gl.clearColor(0.0, 0.0, 0.0, 1.0); //set clear color to black, fully opaque
+		gl.clearColor(0.0, 0.0, 0.0, 0.5); //set clear color to black, fully opaque
 		gl.enable(gl.DEPTH_TEST);	//enable depth testing
 		gl.depthFunc(gl.LEQUAL);	//Near things obscure far things
 		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);	//clear tho color as well as the depth buffer.
@@ -128,9 +128,6 @@ function drawScene(){
 	gl.bindBuffer(gl.ARRAY_BUFFER, VerticesColorBuffer);
 	gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
-	//gl.bindBuffer(gl.ARRAY_BUFFER, BackgroundBuffer);
-	//gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-	//gl.drawArrays(gl.TRIANGLE_STRIP, 0, 5);
 
 	if(currentlyPressedKeys[70]==false){
 		gl.bindBuffer(gl.ARRAY_BUFFER, TriangleStripOne);
@@ -144,9 +141,18 @@ function drawScene(){
 		gl.bindBuffer(gl.ARRAY_BUFFER, TriangleFanOne);
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, LineColorBuffer);
+		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+		
+		gl.lineWidth(1.5);
+		gl.bindBuffer(gl.ARRAY_BUFFER, LineLoopBuffer);
+		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+		gl.drawArrays(gl.LINE_LOOP, 0, 12);
 	}
 
 	if(currentlyPressedKeys[87] == false){
+		gl.lineWidth(1);
 		gl.bindBuffer(gl.ARRAY_BUFFER, LineColorBuffer);
 		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
@@ -204,16 +210,23 @@ function initBuffers(){
 	];
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-
-	BackgroundBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, BackgroundBuffer);
+	//outline vertices
+	LineLoopBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, LineLoopBuffer);
 	vertices = [
-			-5.0,	-5.0,	0.0,
-			-5.0,	5.0,	0.0,
-			5.0,	5.0,	0.0,
-			5.0,	-5.0,	0.0,
-			-5.0,	-5.0,	0.0
-			];
+		-0.6, 	1.0,	0.0,
+		0.6,	1.0,	0.0,
+		0.6,	0.6,	0.0,
+		0.2,	0.6,	0.0,
+		0.2,	-0.6,	0.0,
+		0.6,	-0.6,	0.0,
+		0.6,	-1.0,	0.0,
+		-0.6,	-1.0,	0.0,
+		-0.6,	-0.6,	0.0,
+		-0.2,	-0.6,	0.0,
+		-0.2,	0.6,	0.0,
+		-0.6,	0.6,	0.0,
+		];
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
 	//colors
