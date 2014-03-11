@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<script src="StaufferTaylorMP2.js">
+</script>
+
+<script src="sylvester.js">
+</script>
+
+<script src="glUtils.js">
+</script>
+
+<script src="webgl-utils.js">
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	   varying lowp vec4 vColor;
+    	
+      void main(void) {
+        gl_FragColor = vColor;
+      }
+
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+	    attribute vec3 aVertexPosition;
+      attribute vec4 aVertexColor;
+    
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+      uniform mat4 uRotationMatrix;
+      uniform mat4 uTranslateMatrix;
+      uniform mat4 uScaleMatrix;
+      uniform float time;
+      
+			varying lowp vec4 vColor;
+    
+      void main(void) {
+        gl_Position = uPMatrix * uMVMatrix  * uTranslateMatrix * uRotationMatrix  * uScaleMatrix * vec4(aVertexPosition, 1.0);
+        vColor = aVertexColor;
+      }
+</script>
+
+
+	<body onload="start()" onresize="onresize()">
+      
+      <canvas id="heightmap" style="display: none">
+        
+      </canvas>
+      
+  		<canvas id="glcanvas" width="640" height="480" style="position:absolute; left: 0px; top: 0px">
+          Your Browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+  		</canvas>
+
+      <div id="HUD" style="position: absolute; right: 0px; padding-right: 5px; padding-left: 5px; text-shadow: 0px 0px 1px white; color: black">
+        <p id="Info"></p>
+        <p id="Position"></p>
+      </div>
+
+      <div style="position: absolute; left: 0px; padding-right: 5px; padding-left: 5px; text-shadow: 0px 0px 1px white; color: black">
+        <p id="Instructions"> </p>
+        <p id="Instructions2"> </p>
+        <p id="Instructions3"> </p>
+      </div>
+
+
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

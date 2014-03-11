@@ -119,7 +119,7 @@ function getShader(gl, id){
 
 function drawScene(){
 	var time = Math.PI;
-	if(currentlyPressedKeys[68]==true) time = (((new Date).getTime())%720)*(Math.PI/180.0);
+	if(currentlyPressedKeys[68]==true) time = (((new Date).getTime())%720)*(Math.PI/180.0); //make dance if key pressed
 	var timeUniform = gl.getUniformLocation(shaderProgram, "time");
   	gl.uniform1f(timeUniform, time);
 
@@ -129,7 +129,7 @@ function drawScene(){
 	gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
 
-	if(currentlyPressedKeys[70]==false){
+	if(currentlyPressedKeys[70]==false){ //draw fill if key pressed
 		gl.bindBuffer(gl.ARRAY_BUFFER, TriangleStripOne);
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 6);
@@ -151,7 +151,7 @@ function drawScene(){
 		gl.drawArrays(gl.LINE_LOOP, 0, 12);
 	}
 
-	if(currentlyPressedKeys[87] == false){
+	if(currentlyPressedKeys[87] == false){//draw wireframe if key pressed
 		gl.lineWidth(1);
 		gl.bindBuffer(gl.ARRAY_BUFFER, LineColorBuffer);
 		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
