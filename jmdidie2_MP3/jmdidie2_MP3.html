@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<title>Teapot</title>
+
+<script src="webgl-utils.js"></script>    
+<script src="sylvester.js"></script>
+<script src="glUtils.js"></script>
+<script src="jmdidie2_mp3.js"></script>
+
+    <!-- Fragment shader program -->
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+      varying lowp vec4 vColor;
+      varying highp vec3 vLighting;
+
+      void main(void) {
+        gl_FragColor = vColor;
+      }
+    </script>
+    
+    <!-- Vertex shader program -->
+    
+    <script id="shader-vs" type="x-shader/x-vertex">
+      attribute vec3 aVertexPosition;
+      attribute vec3 aVertexNormal;
+      attribute vec4 aVertexColor;
+    
+      uniform highp mat4 uNormalMatrix;
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+      uniform mat4 uTransformation;
+      
+      varying lowp vec4 vColor;
+      varying highp vec3 vLighting;
+    
+      void main(void) {
+
+        gl_Position = uPMatrix * uMVMatrix * /*uTransformation **/ vec4(aVertexPosition, 1.0);
+        vColor = vec4(aVertexNormal, aVertexColor.a);
+
+        // Apply lighting effect
+        
+        highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
+        highp vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
+        highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
+        
+        highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+        
+        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+        vLighting = ambientLight + (directionalLightColor * directional);
+      }
+    </script>
+
+  
+  <!-- width = "1350" height = "660" -->
+  <body onload="start()">
+    <canvas id="glcanvas" width="640" height="480">
+    	Your browser doesn't appear to support the HTML5
+    	<code>&lt;canvas&gt;</code> element.
+    </canvas>
+  </body>
+</html>

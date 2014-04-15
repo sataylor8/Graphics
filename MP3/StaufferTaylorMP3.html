@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<script src="StaufferTaylorMP3.js">
+</script>
+
+<script src="sylvester.js">
+</script>
+
+<script src="glUtils.js">
+</script>
+
+<script src="webgl-utils.js">
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	   varying lowp vec4 vColor;
+     varying highp vec3 vVertexNormal;
+     varying highp vec2 vTextureCoord;
+     varying highp vec3 vPosition;
+
+     uniform sampler2D uSampler0;
+     uniform sampler2D uSampler1;
+     uniform samplerCube CubeSampler;
+     uniform highp mat4 uNormalMatrix;
+     uniform highp float StateUniform;
+    	
+
+      void main(void) {
+        // Apply lighting effect
+        
+        highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
+        highp vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
+        highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
+        
+
+        mediump vec4 texelBump = texture2D(uSampler1, vec2(vTextureCoord.s, vTextureCoord.t));
+        highp vec4 transformedNormal = normalize(uNormalMatrix * vec4(vVertexNormal, 1.0));
+        highp vec4 tangentNormal = uNormalMatrix * vec4(texelBump.xyz, 1.0);
+        highp vec3 crossNormal = cross(3.0*transformedNormal.xyz, tangentNormal.xyz);
+        
+        
+
+        mediump vec4 texelColor = texture2D(uSampler0, vec2(vTextureCoord.s, vTextureCoord.t));
+
+        if(StateUniform == 0.0){
+          gl_FragColor = vColor;
+        }
+        if(StateUniform == 1.0){
+          highp float directional = max(dot(2.0*transformedNormal.xyz, directionalVector), 0.0);
+          highp vec3 vLighting = ambientLight + (directionalLightColor * directional);
+          gl_FragColor = vec4(vColor.rgb * vLighting, vColor.a);
+        }
+        if(StateUniform == 2.0){
+          highp float directional = max(dot(2.0*transformedNormal.xyz, directionalVector), 0.0);
+          highp vec3 vLighting = ambientLight + (directionalLightColor * directional);
+          highp vec4 Holder = texture2D(uSampler0, vec2(vTextureCoord.s, vTextureCoord.t));
+          gl_FragColor = vec4(Holder.rgb *vLighting, Holder.a);
+        }
+        if(StateUniform == 3.0){
+          highp float directional = max(dot(crossNormal.xyz, directionalVector), 0.0);
+          highp vec3 vLighting = ambientLight + (directionalLightColor * directional);
+          gl_FragColor = vec4(vColor.rgb * vLighting, vColor.a);
+        }
+        if(StateUniform == 4.0){
+          highp vec3 reflected = reflect(vPosition, vVertexNormal);
+          gl_FragColor = textureCube(CubeSampler, reflected);
+        }
+        if(StateUniform == 5.0){
+          gl_FragColor = vec4(vVertexNormal, vColor.a);
+        }
+        
+        //gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+        //gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); 
+        //gl_FragColor = vec4(vColor.rgb * vLighting, vColor.a);
+        //gl_FragColor = vec4(vVertexNormal, vColor.a);
+        
+      }
+
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+	    attribute vec3 aVertexPosition;
+      attribute vec4 aVertexColor;
+      attribute vec3 aVertexNormal;
+      attribute vec2 aTextureCoord;
+    
+      
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+      uniform mat4 uRotationMatrix;
+      uniform mat4 uTranslateMatrix;
+      uniform mat4 uScaleMatrix;
+      uniform float time;
+      
+      varying lowp vec4 vColor;
+      varying highp vec3 vVertexNormal;
+      varying highp vec2 vTextureCoord;
+      varying highp vec3 vPosition;
+    
+      void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * uRotationMatrix * vec4(aVertexPosition, 1.0);
+        vColor = aVertexColor;
+        vVertexNormal = (uRotationMatrix * vec4(aVertexNormal, 1.0)).xyz; 
+        vTextureCoord = aTextureCoord;   
+        vPosition = gl_Position.xyz;    
+      }
+</script>
+
+
+	<body onload="start()" onresize="onresize()">
+
+      <canvas id="heightmap" style="display: none">
+        
+      </canvas>
+      
+  		<canvas id="glcanvas" width="640" height="480" style="position:absolute; left: 0px; top: 0px">
+          Your Browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+  		</canvas>
+
+      <div style="position: absolute; left: 0px; padding-right: 5px; padding-left: 5px; text-shadow: 0px 0px 1px white; color: black">
+        <p> Press 1 to Change Rendering Model </p>
+        <p id="State"> No Lighting</p>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
